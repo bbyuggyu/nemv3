@@ -1,9 +1,10 @@
 var createError = require('http-errors');
 var express = require('express');
+var history = require('connect-history-api-fallback');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const cors = require('cors')
+const cors = require('cors');
 
 var app = express();
 
@@ -12,9 +13,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use(cors())
+app.use(cors());
 app.use('/api', require('./routes/api'));
-
+app.use(history());
 app.use(express.static(path.join(__dirname, '../','fe', 'dist')));
 
 
@@ -38,8 +39,9 @@ module.exports = app;
 
 const mongoose = require('mongoose')
 // const User = require('./models/users')
+const cfg = require('../config')
 
-mongoose.connect('mongodb://localhost:27017/nemv', { useNewUrlParser: true, useUnifiedTopology : true, },  (err) => {
+mongoose.connect(cfg.dbUrl, { useNewUrlParser: true, useUnifiedTopology : true, },  (err) => {
   if(err) return console.error(err)
   console.log('mongoose connected!')
   // User.deleteMany()

@@ -8,6 +8,4 @@ router.all('*', function(req, res, next) {
   next(createError(404, '그런 api 없어요.'));
 });
 
-
-
 module.exports = router;

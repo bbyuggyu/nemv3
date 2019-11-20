@@ -74,7 +74,7 @@
               <v-btn
                 color="orange"
                 text
-                @click="putDialog(user._id)"
+                @click="putDialog(u)"
               >
                 수정
               </v-btn>
@@ -82,7 +82,7 @@
               <v-btn
                 color="error"
                 text
-                @click="delUser(user._id)"
+                @click="delUser(u._id)"
               >
                 삭제
               </v-btn>
@@ -205,6 +205,8 @@ export default {
 
     mdUp () {
       this.dialog = true
+      this.userName = ''
+      this.userAge = ''
     },
 
     postUser () {
@@ -243,6 +245,7 @@ export default {
     },
 
     putUser () {
+      this.dialog = false
       axios.put(`http://localhost:3000/api/user/${this.putId}`, {
         name: this.userName, age: this.userAge // req.body
       })
