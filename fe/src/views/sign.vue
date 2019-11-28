@@ -10,7 +10,7 @@
           <v-card-text>
             <v-form>
               <v-text-field prepend-icon="mdi-account" v-model="form.id" label="아이디" type="text"></v-text-field>
-              <v-text-field prepend-icon="mdi-lock" v-model="form.pwd" label="비밀번호" type="password"></v-text-field>
+              <v-text-field prepend-icon="mdi-lock" v-model="form.pwd" @keyup.enter="signIn" label="비밀번호" type="password"></v-text-field>
             </v-form>
           </v-card-text>
           <v-card-actions>
