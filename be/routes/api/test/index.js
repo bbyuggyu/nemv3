@@ -2,14 +2,13 @@ var express = require('express');
 var createError = require('http-errors');
 var router = express.Router();
 
+router.get('/', function(req, res, next) {
+    console.log(req.headers)
+  res.send({ msg: 'hello', a: '괜찮아'})
+});
 
-router.use('/user', require('./user'))
-router.use('/test', require('./test'))
-router.use('/sign', require('./sign'))
-
-router.all('*', function(req, res, next) {
-  // 토큰 검사
-  next() 
+router.get('hello', function(req, res, next) {
+    res.send({ msg: 'hello', a: 2222 })
 });
 
 router.all('*', function(req, res, next) {

@@ -53,3 +53,15 @@ mongoose.connect(cfg.dbUrl, { useNewUrlParser: true, useUnifiedTopology : true, 
   //   .catch(e => console.error(e))
 
 })
+
+// var jwt = require('jsonwebtoken');
+// const key = '베리베리어려운키'
+// var token = jwt.sign({ id: 'memi', email: 'memi@xxx' }, key);
+// console.log(token)
+
+// var decoded = jwt.verify(token, key);
+// console.log(decoded) // bar
+
+// User.deleteMany({})
+//   .then(r => console.log(r))
+//   .catch(err => console.error(err))

@@ -41,8 +41,11 @@ export default {
         }
       },
       {
-        title: 'My Account',
-        icon: 'mdi-account'
+        title: 'Header',
+        icon: 'mdi-account',
+        to: {
+          path: '/header'
+        }
       },
       {
         title: 'Users',
