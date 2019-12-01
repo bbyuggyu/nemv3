@@ -33,27 +33,57 @@ export default {
   data () {
     return {
       drawer: true,
-      items: [{
-        title: 'Home',
-        icon: 'mdi-home-city',
-        to: {
-          path: '/'
+      items: [
+        {
+          title: 'Home',
+          icon: 'mdi-home-city',
+          to: {
+            path: '/'
+          }
+        },
+        {
+          icon: 'mdi-account',
+          title: 'lv0',
+          to: {
+            path: '/lv0'
+          }
+        },
+        {
+          icon: 'mdi-account',
+          title: 'lv1',
+          to: {
+            path: '/lv1'
+          }
+        },
+        {
+          icon: 'mdi-account',
+          title: 'lv2',
+          to: {
+            path: '/lv2'
+          }
+        },
+        {
+          icon: 'mdi-account',
+          title: 'lv3',
+          to: {
+            path: '/lv3'
+          }
+        },
+        {
+          icon: 'mdi-account-group-outline',
+          title: '사용자관리',
+          to: {
+            path: '/user'
+          }
+        },
+        {
+          icon: 'mdi-account-group-outline',
+          title: '페이지관리',
+          to: {
+            path: '/page'
+          }
         }
-      },
-      {
-        title: 'Header',
-        icon: 'mdi-account',
-        to: {
-          path: '/header'
-        }
-      },
-      {
-        title: 'Users',
-        icon: 'mdi-account-group-outline',
-        to: {
-          path: '/User'
-        }
-      }],
+      ],
       mini: true
     }
   }
