@@ -73,6 +73,12 @@ const routes = [
     beforeEnter: pageCheck
   },
   {
+    path: '/site',
+    name: '사이트',
+    component: () => import('../views/site'),
+    beforeEnter: pageCheck
+  },
+  {
     path: '/user',
     name: '사용자',
     component: () => import('../views/User'),

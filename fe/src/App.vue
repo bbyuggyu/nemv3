@@ -1,8 +1,9 @@
 
 <template>
-  <v-app>
+  <v-app :dark="siteDark">
     <NavigationBar></NavigationBar>
-    <ToolBar></ToolBar>
+     <ToolBar></ToolBar>
+    <Footer></Footer>
     <v-content>
       <router-view />
     </v-content>
@@ -12,11 +13,31 @@
 <script>
 import NavigationBar from '@/components/NavigationBar'
 import ToolBar from '@/components/ToolBar'
+import Footer from '@/components/Footer'
 
 export default {
   name: 'App',
-  components: { NavigationBar, ToolBar },
-  data: () => ({
-  })
+  components: { NavigationBar, ToolBar, Footer },
+  data () {
+    return {
+      siteDark: false
+    }
+  },
+  mounted () {
+    this.getSite()
+  },
+  methods: {
+    getSite () {
+      this.$axios.get('/site')
+        .then(r => {
+          console.log(r.data.d)
+          this.siteDark = r.data.d.dark
+        })
+        .catch(e => console.error(e.message))
+    }
+  }
+  // created () {
+  //   this.$vuetify.theme.dark = true
+  // }
 }
 </script>
