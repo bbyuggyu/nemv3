@@ -28,5 +28,17 @@ User.findOne({ id: cfg.admin.id })
     console.error(e.message)
   })
 
+  User.findOne({ id: 'lv2' })
+  .then((r) => {
+    if (!r) return User.create({ id: 'lv2', pwd: '1234', name: 'lv2', lv: 2 })
+    return Promise.resolve(null)
+  })
+  .then((r) => {
+    if (r) console.log(`admin:${r.id} created!`)
+  })
+  .catch((e) => {
+    console.error(e.message)
+  })
+
 
 module.exports = User

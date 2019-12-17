@@ -8,10 +8,30 @@ Vue.use(VueRouter)
 Vue.prototype.$axios = axios
 const apiRootPath = process.env.NODE_ENV !== 'production' ? 'http://localhost:3000/api/' : '/api/'
 Vue.prototype.$apiRootPath = apiRootPath
+axios.defaults.baseURL = apiRootPath
+// axios.defaults.headers.common['Authorization'] = localStorage.getItem('token') // add
+
+// Add a request interceptor
+axios.interceptors.request.use(function (config) {
+  // Do something before request is sent
+  config.headers.Authorization = localStorage.getItem('token')
+  return config
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error)
+})
+// Add a response interceptor
+axios.interceptors.response.use(function (response) {
+  // Do something with response data
+  return response
+}, function (error) {
+  // Do something with response error
+  return Promise.reject(error)
+})
 
 const pageCheck = (to, from, next) => {
   // return next()
-  axios.post(`${apiRootPath}page`, { name: to.path.replace('/', '') }, { headers: { Authorization: localStorage.getItem('token') } })
+  axios.post(`${apiRootPath}page`, { name: to.path.replace('/', '') }, { headers: { Authorization: localStorage.getItem('token') || '' } })
     .then((r) => {
       if (!r.data.success) throw new Error(r.data.msg)
       next()
@@ -55,12 +75,14 @@ const routes = [
   {
     path: '/user',
     name: '사용자',
-    component: () => import('../views/User')
+    component: () => import('../views/User'),
+    beforeEnter: pageCheck
   },
   {
     path: '/page',
     name: '페이지',
-    component: () => import('../views/page')
+    component: () => import('../views/page'),
+    beforeEnter: pageCheck
   },
   {
     path: '/block/:msg',

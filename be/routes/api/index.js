@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const cfg = require('../../../config');
 
 router.use('/sign', require('./sign'))
-router.use('/manage', require('./manage'))
 
 const verifyToken = (t) => {
   return new Promise((resolve, reject) => {
@@ -23,6 +22,7 @@ router.all('*', function(req, res, next) {
   const token = req.headers.authorization
   verifyToken(token)
     .then(v => {
+      console.log(v)
       req.user = v
       next()
     })
@@ -30,13 +30,7 @@ router.all('*', function(req, res, next) {
 })
 
 router.use('/page', require('./page'))
-
-router.all('*', function(req, res, next) {
-  // 또 검사해도 됨
-  if (req.user.lv > 2) return res.send({ success: false, msg: '권한이 없습니다.' })
-  next()
-})
-
+router.use('/manage', require('./manage'))
 router.use('/test', require('./test'))
 router.use('/user', require('./user'))
 
