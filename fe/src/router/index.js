@@ -101,6 +101,11 @@ const routes = [
     component: () => import('../views/sign.vue')
   },
   {
+    path: '/register',
+    name: '회원가입',
+    component: () => import('../views/register.vue')
+  },
+  {
     path: '*',
     name: 'e404',
     component: () => import('../views/e404.vue')
