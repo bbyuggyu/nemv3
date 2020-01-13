@@ -24,7 +24,6 @@ const signToken = (id, lv, name, rmb) => {
 
 router.post('/in', (req, res) => {
   const { id, pwd, remember } = req.body
-  console.log(27, req.body)
   if (!id) return res.send({ success: false, msg: '아이디가 없습니다.'})
   if (!pwd) return res.send({ success: false, msg: '비밀번호가 없습니다.'})
   if (remember === undefined) return res.send({ success: false, msg: '기억하기가 없습니다.'})

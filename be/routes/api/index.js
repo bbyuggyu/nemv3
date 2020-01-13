@@ -53,7 +53,7 @@ router.all('*', function(req, res, next) {
   // 토큰 검사
   getToken(req.headers.authorization)
     .then((v) => {
-      console.log(v)
+      console.log(56, v)
       req.user = v.user
       req.token = v.token
       next()
