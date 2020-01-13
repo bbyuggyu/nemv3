@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import * as VeeValidate from 'vee-validate'
+import VeeValidate from 'vee-validate'
 
 Vue.config.productionTip = false
 
