@@ -2,14 +2,15 @@ var express = require('express');
 var createError = require('http-errors');
 var router = express.Router();
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 const cfg = require('../../../config');
-const moment = require('moment')
 
 router.use('/sign', require('./sign'))
 router.use('/site', require('./site'))
 router.use('/register', require('./register'))
 
 const verifyToken = (t) => {
+  console.log(13, t)
   return new Promise((resolve, reject) => {
     if (!t) resolve({ id: 'guest', name: '손님', lv: 3 })
     if (t.length < 10) resolve({ id: 'guest', name: '손님', lv: 3 })
@@ -41,7 +42,7 @@ const getToken = async(t) => {
   if (vt.lv > 2) return { user: vt, token: null }
   const diff = moment(vt.exp * 1000).diff(moment(), 'seconds')
   // return vt
-  console.log(diff)
+  console.log(45, diff)
   if (diff > (vt.exp - vt.iat) / cfg.jwt.expiresInDiv) return { user: vt, token: null }
 
   const nt = await signToken(vt.id, vt.lv, vt.name, vt.rmb)
@@ -53,7 +54,7 @@ router.all('*', function(req, res, next) {
   // 토큰 검사
   getToken(req.headers.authorization)
     .then((v) => {
-      console.log(56, v)
+      console.log(57, v)
       req.user = v.user
       req.token = v.token
       next()

@@ -36,7 +36,7 @@ router.post('/in', (req, res) => {
     return signToken(r.id, r.lv, r.name, remember)
   })
   .then((r) => {
-    res.send({ success: true, token: r, token: req.token })
+    res.send({ success: true, token: r })
   })
   .catch((e) => {
     res.send({ success: false, msg: e.message })
