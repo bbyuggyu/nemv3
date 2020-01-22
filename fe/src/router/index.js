@@ -76,6 +76,12 @@ const routes = [
     beforeEnter: pageCheck
   },
   {
+    path: '/manage/boards',
+    name: 'manageBoards',
+    component: () => import('../views/manage/boards'),
+    beforeEnter: pageCheck
+  },
+  {
     path: '/site',
     name: '사이트',
     component: () => import('../views/site'),

@@ -71,6 +71,13 @@ export default {
         },
         {
           icon: 'mdi-account-group-outline',
+          title: '게시판관리',
+          to: {
+            path: '/manage/boards'
+          }
+        },
+        {
+          icon: 'mdi-account-group-outline',
           title: '사이트관리',
           to: {
             path: '/site'
