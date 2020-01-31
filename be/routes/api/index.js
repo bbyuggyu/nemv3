@@ -21,7 +21,7 @@ const verifyToken = (t) => {
   })
 }
 
-const signToken = (id, lv, name, rmb) => {
+const signToken = (_id, id, lv, name, rmb) => {
   return new Promise((resolve, reject) => {
     const o = {
       issuer: cfg.jwt.issuer,
@@ -30,7 +30,7 @@ const signToken = (id, lv, name, rmb) => {
       algorithm: cfg.jwt.algorithm
     }
     if (rmb) o.expiresIn = cfg.jwt.expiresInRemember // 6일
-    jwt.sign({ id, lv, name, rmb }, cfg.jwt.secretKey, o, (err, token) => {
+    jwt.sign({ _id, id, lv, name, rmb }, cfg.jwt.secretKey, o, (err, token) => {
       if (err) reject(err)
       resolve(token)
     })
@@ -45,7 +45,7 @@ const getToken = async(t) => {
   console.log(45, diff)
   if (diff > (vt.exp - vt.iat) / cfg.jwt.expiresInDiv) return { user: vt, token: null }
 
-  const nt = await signToken(vt.id, vt.lv, vt.name, vt.rmb)
+  const nt = await signToken(vt._id, vt.id, vt.lv, vt.name, vt.rmb)
   vt = await verifyToken(nt)
   return { user: vt, token: nt }
 }
@@ -66,6 +66,8 @@ router.use('/page', require('./page'))
 router.use('/manage', require('./manage'))
 router.use('/test', require('./test'))
 router.use('/user', require('./user'))
+router.use('/board', require('./board'))
+router.use('/article', require('./article'))
 
 router.all('*', function(req, res, next) {
   next(createError(404, '그런 api 없어요.'));

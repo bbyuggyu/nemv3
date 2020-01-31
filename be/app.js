@@ -5,6 +5,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
+const User = require('./models/users')
+const Board = require('./models/boards')
+const Article = require('./models/articles')
 
 var app = express();
 
@@ -65,3 +68,9 @@ mongoose.connect(cfg.dbUrl, { useNewUrlParser: true, useUnifiedTopology : true, 
 // User.deleteMany({})
 //   .then(r => console.log(r))
 //   .catch(err => console.error(err))
+
+// User.findOne()
+//   .then(r => console.log(73, r.id, r._id))  // 5e1580ab578ce7318c60716d
+
+// Board.findOne()
+//   .then(r => console.log(76, r.name, r._id))

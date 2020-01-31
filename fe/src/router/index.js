@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import axios from 'axios'
-import Home from '../views/Home.vue'
+// import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
@@ -35,21 +35,24 @@ axios.interceptors.response.use(function (response) {
 const pageCheck = (to, from, next) => {
   // return next()
   axios.post(`${apiRootPath}page`, { name: to.path.replace('/', '') }, { headers: { Authorization: localStorage.getItem('token') || '' } })
+  // axios.post('page', { name: to.path })
     .then((r) => {
       if (!r.data.success) throw new Error(r.data.msg)
       next()
     })
     .catch((e) => {
       // console.error(e.message)
-      next(`/block/${e.message}`)
+      // next(`/block/${e.message}`)
+      next(`/block/${e.message.replace(/\//gi, ' ')}`)
     })
 }
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: Home
+    name: 'boardAnyone',
+    component: () => import('../views/board/anyone'),
+    beforeEnter: pageCheck
   },
   {
     path: '/lv0',
