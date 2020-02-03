@@ -23,20 +23,28 @@
       </v-flex>
       <!-- <v-flex xs12 sm6 md4 v-for="article in articles" :key="article._id">
         {{article}}
-      </!--> -->
+      </v-flex> -->
      <v-flex xs12>
-       <v-data-table
-          :headers="headers"
-          :items="articles"
-          :loading="loading">
-          <template slot="items" slot-scope="props">
-            <td :class="headers[0].class">{{ id2date(props.item._id)}}</td>
-            <td :class="headers[1].class">{{ props.item.title }}</td>
-            <td :class="headers[2].class">{{ props.item._user ? props.item._user.id : '손님' }}</td>
-            <td :class="headers[3].class">{{ props.item.cnt.view }}</td>
-            <td :class="headers[4].class">{{ props.item.cnt.like }}</td>
-          </template>
-        </v-data-table>
+      <v-data-table
+        :headers="headers"
+        :items="articles"
+        :loading="loading">
+        <template v-slot:item.id="{ item }">
+          <td :class="headers[0].class">{{ id2date(item._id)}}</td>
+        </template>
+        <template v-slot:item.title="{ item }">
+          <td :class="headers[1].class"><a @click="read(item)"> {{ item.title }}</a></td>
+        </template>
+        <template v-slot:item.user="{ item }">
+          <td :class="headers[2].class">{{ item._user ? item._user.id : '손님' }}</td>
+        </template>
+        <template v-slot:item.view="{ item }">
+          <td :class="headers[3].class">{{ item.cnt.view }}</td>
+        </template>
+        <template v-slot:item.like="{ item }">
+          <td :class="headers[4].class">{{ item.cnt.like }}</td>
+        </template>
+      </v-data-table>
      </v-flex>
     </v-layout>
 
@@ -86,6 +94,22 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="dlRead" persistent max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">{{rd.title}}</span>
+        </v-card-title>
+        <v-card-text>
+          {{rd.content}}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click.native="dlRead = false">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-snackbar
       v-model="sb.act"
     >
@@ -111,11 +135,11 @@ export default {
         rmk: '무엇?'
       },
       headers: [
-        { text: '날짜', value: '_id', sortable: true, class: 'hidden-sm-and-down' },
+        { text: '날짜', value: 'id', sortable: true, class: 'hidden-sm-and-down' },
         { text: '제목', value: 'title', sortable: true },
-        { text: '글쓴이', value: '_user', sortable: false },
-        { text: '조회수', value: 'cnt.view', sortable: true },
-        { text: '추천', value: 'cnt.like', sortable: true }
+        { text: '글쓴이', value: 'user', sortable: false },
+        { text: '조회수', value: 'view', sortable: true },
+        { text: '추천', value: 'like', sortable: true }
       ],
       articles: [],
       loading: false,
@@ -129,6 +153,11 @@ export default {
         act: false,
         msg: '',
         color: 'error'
+      },
+      dlRead: false,
+      rd: {
+        title: '',
+        content: ''
       }
     }
   },
@@ -169,9 +198,23 @@ export default {
     list () {
       if (this.loading) return
       this.loading = true
-      this.$axios.get(`article/${this.board._id}`)
+      this.$axios.get(`article/list/${this.board._id}`)
         .then(({ data }) => {
           this.articles = data.ds
+          this.loading = false
+        })
+        .catch((e) => {
+          this.pop(e.message, 'error')
+          this.loading = false
+        })
+    },
+    read (atc) {
+      this.rd.title = atc.title
+      this.loading = true
+      this.$axios.get(`article/read/${atc._id}`)
+        .then(({ data }) => {
+          this.dlRead = true
+          this.rd.content = data.d.content
           this.loading = false
         })
         .catch((e) => {
