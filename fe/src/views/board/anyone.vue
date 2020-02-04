@@ -24,11 +24,19 @@
       <!-- <v-flex xs12 sm6 md4 v-for="article in articles" :key="article._id">
         {{article}}
       </v-flex> -->
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+      ></v-text-field>
      <v-flex xs12>
       <v-data-table
         :headers="headers"
         :items="articles"
-        :loading="loading">
+        :loading="loading"
+        :search="search">
         <template v-slot:item.id="{ item }">
           <td :class="headers[0].class">{{ id2date(item._id)}}</td>
         </template>
@@ -143,6 +151,7 @@ export default {
         name: '로딩중...',
         rmk: '무엇?'
       },
+      search: '',
       headers: [
         { text: '날짜', value: 'id', sortable: true },
         { text: '제목', value: 'title', sortable: true },
