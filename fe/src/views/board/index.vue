@@ -127,18 +127,6 @@
       </v-card>
     </v-dialog>
 
-    <v-snackbar
-      v-model="sb.act"
-    >
-      {{ sb.msg }}
-      <v-btn
-        :color="sb.color"
-        text
-        @click="sb.act = false"
-      >
-        닫기
-      </v-btn>
-    </v-snackbar>
   </v-container>
 </template>
 <script>
@@ -169,11 +157,6 @@ export default {
       form: {
         title: '',
         content: ''
-      },
-      sb: {
-        act: false,
-        msg: '',
-        color: 'error'
       },
       dlRead: false,
       rd: {
@@ -219,15 +202,15 @@ export default {
         })
     },
     add () {
-      if (!this.form.title) return this.pop('제목을 작성해주세요', 'warning')
-      if (!this.form.content) return this.pop('내용을 작성해주세요', 'warning')
+      if (!this.form.title) return this.$store.commit('pop', { msg: '제목을 작성해주세요', color: 'warning' })
+      if (!this.form.content) return this.$store.commit('pop', { msg: '내용을 작성해주세요', color: 'warning' })
       this.$axios.post(`article/${this.board._id}`, this.form)
         .then((r) => {
           this.dialog = false
           this.list()
         })
         .catch((e) => {
-          this.pop(e.message, 'error')
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
         })
     },
     list () {
@@ -239,7 +222,7 @@ export default {
           this.loading = false
         })
         .catch((e) => {
-          this.pop(e.message, 'error')
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
           this.loading = false
         })
     },
@@ -256,14 +239,14 @@ export default {
           this.loading = false
         })
         .catch((e) => {
-          this.pop(e.message, 'error')
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
           this.loading = false
         })
     },
     mod () {
-      if (!this.form.title) return this.pop('제목을 작성해주세요', 'warning')
-      if (!this.form.content) return this.pop('내용을 작성해주세요', 'warning')
-      if (this.selArticle.title === this.form.title && this.selArticle.content === this.form.content) return this.pop('변경된 내용이 없습니다', 'warning')
+      if (!this.form.title) return this.$store.commit('pop', { msg: '제목을 작성해주세요', color: 'warning' })
+      if (!this.form.content) return this.$store.commit('pop', { msg: '내용을 작성해주세요', color: 'warning' })
+      if (this.selArticle.title === this.form.title && this.selArticle.content === this.form.content) return this.$store.commit('pop', { msg: '변경된 내용이 없습니다', color: 'warning' })
       this.$axios.put(`article/${this.selArticle._id}`, this.form)
         .then(({ data }) => {
           this.dialog = false
@@ -273,7 +256,7 @@ export default {
           // this.list()
         })
         .catch((e) => {
-          this.pop(e.message, 'error')
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
         })
     },
     del () {
@@ -284,17 +267,12 @@ export default {
           this.list()
         })
         .catch((e) => {
-          this.pop(e.message, 'error')
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
         })
     },
     id2date (val) {
       if (!val) return '잘못된 시간 정보'
       return new Date(parseInt(val.substring(0, 8), 16) * 1000).toLocaleString()
-    },
-    pop (m, c) {
-      this.sb.act = true
-      this.sb.msg = m
-      this.sb.color = c
     }
   }
 }
