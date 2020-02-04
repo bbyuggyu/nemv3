@@ -60,10 +60,34 @@
     >
       <v-icon>+</v-icon>
     </v-btn>
-    <v-dialog v-model="dialog" persistent max-width="500px">
-      <v-card>
+
+   <v-dialog v-model="dialog" persistent max-width="500px">
+      <v-card v-if="!dlMode">
         <v-card-title>
-          <span class="headline">글 작성</span>
+          <span class="headline">{{selArticle.title}}</span>
+        </v-card-title>
+        <v-card-text>
+          {{selArticle.content}}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="warning darken-1" text @click.native="modDialog()">수정</v-btn>
+          <v-btn color="error darken-1" text @click.native="ca=true">삭제</v-btn>
+          <v-btn color="secondary darken-1" text @click.native="dialog = false">닫기</v-btn>
+        </v-card-actions>
+        <v-card-text>
+          <v-card-text v-if="ca">
+            <v-alert v-model="ca" type="warning">
+              <h4>정말 진행 하시겠습니까?</h4>
+              <v-btn color="error" @click="del()">확인</v-btn>
+              <v-btn color="secondary" @click="ca=false">취소</v-btn>
+            </v-alert>
+          </v-card-text>
+        </v-card-text>
+      </v-card>
+      <v-card v-else>
+        <v-card-title>
+          <span class="headline">글 {{(dlMode === 1) ? '작성' : '수정'}}</span>
         </v-card-title>
         <v-card-text>
           <v-container grid-list-md>
@@ -89,23 +113,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="add()">확인</v-btn>
+          <v-btn color="green darken-1" text @click="(dlMode === 1) ? add() : mod()">확인</v-btn>
           <v-btn color="red darken-1" text @click.native="dialog = false">취소</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="dlRead" persistent max-width="500px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{rd.title}}</span>
-        </v-card-title>
-        <v-card-text>
-          {{rd.content}}
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red darken-1" text @click.native="dlRead = false">닫기</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -135,7 +144,7 @@ export default {
         rmk: '무엇?'
       },
       headers: [
-        { text: '날짜', value: 'id', sortable: true, class: 'hidden-sm-and-down' },
+        { text: '날짜', value: 'id', sortable: true },
         { text: '제목', value: 'title', sortable: true },
         { text: '글쓴이', value: 'user', sortable: false },
         { text: '조회수', value: 'view', sortable: true },
@@ -144,6 +153,9 @@ export default {
       articles: [],
       loading: false,
       dialog: false,
+      dlMode: 0, // 0: read, 1: write, 2: modify
+      selArticle: {},
+      ca: false,
       lvs: [0, 1, 2, 3],
       form: {
         title: '',
@@ -167,9 +179,17 @@ export default {
   methods: {
     addDialog () {
       this.dialog = true
+      this.dlMode = 1
       this.form = {
         title: '',
         content: ''
+      }
+    },
+    modDialog () {
+      this.dlMode = 2
+      this.form = {
+        title: this.selArticle.title,
+        content: this.selArticle.content
       }
     },
     get () {
@@ -209,17 +229,47 @@ export default {
         })
     },
     read (atc) {
-      this.rd.title = atc.title
+      this.selArticle = atc
       this.loading = true
       this.$axios.get(`article/read/${atc._id}`)
         .then(({ data }) => {
-          this.dlRead = true
-          this.rd.content = data.d.content
+          if (!data.success) throw new Error(data.msg)
+          this.dlMode = 0
+          this.dialog = true
+          this.selArticle.content = data.d.content
+          this.selArticle.cnt.view = data.d.cnt.view
           this.loading = false
         })
         .catch((e) => {
           this.pop(e.message, 'error')
           this.loading = false
+        })
+    },
+    mod () {
+      if (!this.form.title) return this.pop('제목을 작성해주세요', 'warning')
+      if (!this.form.content) return this.pop('내용을 작성해주세요', 'warning')
+      if (this.selArticle.title === this.form.title && this.selArticle.content === this.form.content) return this.pop('변경된 내용이 없습니다', 'warning')
+      this.$axios.put(`article/${this.selArticle._id}`, this.form)
+        .then(({ data }) => {
+          this.dialog = false
+          if (!data.success) throw new Error(data.msg)
+          this.selArticle.title = data.d.title
+          this.selArticle.content = data.d.content
+          // this.list()
+        })
+        .catch((e) => {
+          this.pop(e.message, 'error')
+        })
+    },
+    del () {
+      this.$axios.delete(`article/${this.selArticle._id}`)
+        .then(({ data }) => {
+          this.dialog = false
+          if (!data.success) throw new Error(data.msg)
+          this.list()
+        })
+        .catch((e) => {
+          this.pop(e.message, 'error')
         })
     },
     id2date (val) {
