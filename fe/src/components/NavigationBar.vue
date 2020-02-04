@@ -49,13 +49,12 @@ export default {
       mini: true,
       items: [
         {
-          icon: ' mdi-home',
-          title: '끄적끄적',
+          icon: 'mdi-home',
+          title: '현황',
           act: true,
           subItems: [
             {
-              icon: 'home',
-              title: '아무나',
+              title: '홈',
               to: {
                 path: '/'
               }
@@ -63,7 +62,27 @@ export default {
           ]
         },
         {
-          icon: ' mdi-tag-outline',
+          icon: 'mdi-tag-outline',
+          title: '끄적끄적',
+          subItems: [
+            // {
+            //   icon: 'home',
+            //   title: '아무나',
+            //   to: {
+            //     path: '/board/아무나'
+            //   }
+            // },
+            // {
+            //   icon: 'home',
+            //   title: '일반회원',
+            //   to: {
+            //     path: '/board/일반회원'
+            //   }
+            // }
+          ]
+        },
+        {
+          icon: 'mdi-share-variant',
           title: '레벨테스트',
           subItems: [
             {
@@ -131,6 +150,25 @@ export default {
           ]
         }
       ]
+    }
+  },
+  mounted () {
+    this.getBoards()
+  },
+  methods: {
+    getBoards () {
+      this.$axios.get('/board/list')
+        .then(({ data }) => {
+          data.ds.forEach(v => {
+            this.items[1].subItems.push({
+              title: v.name,
+              to: {
+                path: `/board/${v.name}`
+              }
+            })
+          })
+        })
+        .catch(e => console.error(e.message))
     }
   }
 }

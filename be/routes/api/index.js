@@ -7,6 +7,7 @@ const cfg = require('../../../config');
 
 router.use('/sign', require('./sign'))
 router.use('/site', require('./site'))
+router.use('/board', require('./board'))
 router.use('/register', require('./register'))
 
 const verifyToken = (t) => {
@@ -66,7 +67,6 @@ router.use('/page', require('./page'))
 router.use('/manage', require('./manage'))
 router.use('/test', require('./test'))
 router.use('/user', require('./user'))
-router.use('/board', require('./board'))
 router.use('/article', require('./article'))
 
 router.all('*', function(req, res, next) {

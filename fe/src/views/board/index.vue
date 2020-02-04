@@ -182,8 +182,14 @@ export default {
       }
     }
   },
+  watch: {
+    '$route' (to, from) {
+      console.log(to.path, from.path)
+      this.getBoard()
+    }
+  },
   mounted () {
-    this.get()
+    this.getBoard()
   },
   methods: {
     addDialog () {
@@ -201,8 +207,8 @@ export default {
         content: this.selArticle.content
       }
     },
-    get () {
-      this.$axios.get('board/아무나')
+    getBoard () {
+      this.$axios.get(`board/read/${this.$route.params.name}`)
         .then(({ data }) => {
           if (!data.success) throw new Error(data.msg)
           this.board = data.d

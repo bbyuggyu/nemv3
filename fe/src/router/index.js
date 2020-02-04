@@ -50,8 +50,14 @@ const pageCheck = (to, from, next) => {
 const routes = [
   {
     path: '/',
-    name: 'boardAnyone',
-    component: () => import('../views/board/anyone'),
+    name: 'home',
+    component: () => import('../views/Home.vue'),
+    beforeEnter: pageCheck
+  },
+  {
+    path: '/board/:name',
+    name: 'board',
+    component: () => import('../views/board'),
     beforeEnter: pageCheck
   },
   {
