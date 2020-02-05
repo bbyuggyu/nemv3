@@ -3,34 +3,26 @@
     <v-layout row wrap>
       <v-flex xs12>
         <v-card>
-          <v-img
-            class="white--text"
-            height="70px"
-            src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
-          >
-            <v-container fill-height fluid>
-              <v-layout fill-height>
-                <v-flex xs6 align-end flexbox>
-                  <span class="headline">{{board.name}}</span>
-                </v-flex>
-                <v-flex xs6 align-end flexbox>
-                  <span>{{board.rmk}}</span>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-img>
+            <v-card-title class="headline">
+            <v-tooltip bottom>
+              <template v-slot:activator="{}">{{board.name}}</template>
+            </v-tooltip>
+            <v-spacer></v-spacer>
+            <v-flex xs4>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-flex>
+          </v-card-title>
         </v-card>
       </v-flex>
       <!-- <v-flex xs12 sm6 md4 v-for="article in articles" :key="article._id">
         {{article}}
       </v-flex> -->
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        hide-details
-      ></v-text-field>
      <v-flex xs12>
       <v-data-table
         :headers="headers"
@@ -69,7 +61,7 @@
       <v-icon>+</v-icon>
     </v-btn>
 
-   <v-dialog v-model="dialog" persistent max-width="500px">
+   <v-dialog v-model="dialog" persistent max-width="500px" :fullscreen="$vuetify.breakpoint.xs">
       <v-card v-if="!dlMode">
         <v-card-title>
           <span class="headline">{{selArticle.title}}</span>
@@ -130,7 +122,6 @@
   </v-container>
 </template>
 <script>
-
 export default {
   components: { },
   data () {
@@ -277,3 +268,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.v-data-footer__pagination {
+  display: none;
+}
+</style>
