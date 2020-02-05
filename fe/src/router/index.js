@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import axios from 'axios'
+import store from '../store'
 // import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
@@ -29,6 +30,22 @@ axios.interceptors.response.use(function (response) {
   return response
 }, function (error) {
   // Do something with response error
+  // console.log(error.response)
+  switch (error.response.status) {
+    case 400:
+      store.commit('pop', { msg: `잘못된 요청입니다(${error.response.status}:${error.message})`, color: 'error' })
+      break
+    case 401:
+      store.commit('delToken')
+      store.commit('pop', { msg: `인증 오류입니다(${error.response.status}:${error.message})`, color: 'error' })
+      break
+    case 403:
+      store.commit('pop', { msg: `이용 권한이 없습니다(${error.response.status}:${error.message})`, color: 'warning' })
+      break
+    default:
+      store.commit('pop', { msg: `알수 없는 오류입니다(${error.response.status}:${error.message})`, color: 'error' })
+      break
+  }
   return Promise.reject(error)
 })
 
@@ -43,7 +60,9 @@ const pageCheck = (to, from, next) => {
     .catch((e) => {
       // console.error(e.message)
       // next(`/block/${e.message}`)
-      next(`/block/${e.message.replace(/\//gi, ' ')}`)
+      // next(`/block/${e.message.replace(/\//gi, ' ')}`)
+      if (!e.response) store.commit('pop', { msg: e.message, color: 'warning' })
+      next(false)
     })
 }
 

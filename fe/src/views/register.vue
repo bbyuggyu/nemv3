@@ -126,11 +126,13 @@ export default {
         })
         .then(r => {
           if (!r.data.success) throw new Error('서버가 거부했습니다.')
-          this.pop('가입 완료 되었습니다.', 'success')
+          this.$store.commit('pop', { msg: '가입 완료 되었습니다', color: 'success' })
 
           this.$router.push('/sign')
         })
-        .catch(e => this.pop(e.message, 'warning'))
+        .catch(e => {
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
+        })
     },
     pop (m, cl) {
       this.sb.act = true

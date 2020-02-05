@@ -111,7 +111,7 @@ export default {
           this.sites = r.data.sites
         })
         .catch((e) => {
-          this.pop(e.message)
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
         })
     },
     putDialog (site) {
@@ -127,22 +127,25 @@ export default {
         title: this.siteTitle, copyright: this.siteCopyright, dark: this.siteDark
       })
         .then((r) => {
-          this.pop('페이지 수정 완료')
+          this.$store.commit('pop', { msg: '사이트 수정 완료', color: 'success' })
           this.getSites()
         })
         .catch((e) => {
-          this.pop(e.message)
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
         })
     },
+    // delSite (id) {
+    //   this.$axios.delete(`${this.$apiRootPath}manage/site/${id}`)
+    //     .then((r) => {
+    //       this.pop('페이지 삭제 완료')
+    //       this.getSites()
+    //     })
+    //     .catch((e) => {
+    //       this.$store.commit('pop', { msg: '사이트 삭제하면 안되요!', color: 'error' })
+    //     })
+    // },
     delSite (id) {
-      this.$axios.delete(`${this.$apiRootPath}manage/site/${id}`)
-        .then((r) => {
-          this.pop('페이지 삭제 완료')
-          this.getSites()
-        })
-        .catch((e) => {
-          this.pop(e.message)
-        })
+      this.$store.commit('pop', { msg: '사이트 삭제하면 안되요!', color: 'error' })
     },
     pop (msg) {
       this.snackbar = true

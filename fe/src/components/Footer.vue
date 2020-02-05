@@ -20,7 +20,9 @@ export default {
         .then(r => {
           this.siteCopyright = r.data.d.copyright
         })
-        .catch(e => console.error(e.message))
+        .catch(e => {
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
+        })
     }
   }
 }

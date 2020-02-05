@@ -34,7 +34,9 @@ export default {
         .then(r => {
           this.siteTitle = r.data.d.title
         })
-        .catch(e => console.error(e.message))
+        .catch(e => {
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
+        })
     }
   }
 }

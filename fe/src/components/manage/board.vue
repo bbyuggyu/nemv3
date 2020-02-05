@@ -107,7 +107,7 @@ export default {
           this.edit = false
         })
         .catch((e) => {
-          this.pop(e.message, 'error')
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
         })
     },
     del (board) {
@@ -117,7 +117,7 @@ export default {
           this.$emit('list')
         })
         .catch((e) => {
-          this.pop(e.message, 'error')
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
         })
     },
     pop (m, t) {

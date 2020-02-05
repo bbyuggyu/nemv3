@@ -1,5 +1,5 @@
 <template>
-  <v-container grid-list-md>
+  <v-container fluid :grid-list-md="!$vuetify.breakpoint.xs" :class="$vuetify.breakpoint.xs ? 'pa-0' : ''">
     <v-layout row wrap>
       <v-flex xs12>
         <v-card>
@@ -198,7 +198,7 @@ export default {
           this.list()
         })
         .catch((e) => {
-          this.pop(e.message, 'error')
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
         })
     },
     add () {

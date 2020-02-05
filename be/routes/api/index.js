@@ -60,7 +60,7 @@ router.all('*', function(req, res, next) {
       req.token = v.token
       next()
     })
-    .catch(e => res.send({ success: false, msg: e.message }))
+    .catch(e => next(createError(401, e.message)))
 })
 
 router.use('/page', require('./page'))
