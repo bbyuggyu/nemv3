@@ -27,6 +27,8 @@
       <v-data-table
         :headers="headers"
         :items="articles"
+        :page.sync="page"
+        @page-count="pageCount = $event"
         :loading="loading"
         :search="search">
         <template v-slot:item.id="{ item }">
@@ -45,6 +47,7 @@
           <td :class="headers[4].class">{{ item.cnt.like }}</td>
         </template>
       </v-data-table>
+        <v-pagination v-model="page" :length="pageCount"></v-pagination>
      </v-flex>
     </v-layout>
 
@@ -139,6 +142,8 @@ export default {
         { text: '추천', value: 'like', sortable: true }
       ],
       articles: [],
+      page: 1,
+      pageCount: 0,
       loading: false,
       dialog: false,
       dlMode: 0, // 0: read, 1: write, 2: modify
@@ -271,6 +276,12 @@ export default {
 
 <style>
 .v-data-footer__pagination {
+  display: none;
+}
+.v-data-footer__icons-before {
+  display: none;
+}
+.v-data-footer__icons-after {
   display: none;
 }
 </style>
