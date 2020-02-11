@@ -7,6 +7,7 @@ import VeeValidate from 'vee-validate'
 import LoadScript from 'vue-plugin-load-script'
 import VueRecaptcha from 'vue-recaptcha'
 import cfg from '../config'
+import Trend from 'vuetrend'
 
 Vue.config.productionTip = false
 
@@ -14,6 +15,7 @@ Vue.prototype.$cfg = cfg
 
 Vue.use(VeeValidate)
 Vue.use(LoadScript)
+Vue.use(Trend)
 
 Vue.loadScript('https://www.google.com/recaptcha/api.js?onload=vueRecaptchaApiLoaded&render=explicit')
   .then(() => {
