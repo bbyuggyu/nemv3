@@ -143,6 +143,12 @@ const routes = [
     component: () => import('../views/register.vue')
   },
   {
+    path: '/revise',
+    name: 'revise',
+    component: () => import('../views/revise'),
+    beforeEnter: pageCheck
+  },
+  {
     path: '*',
     name: 'e404',
     component: () => import('../views/e404.vue')

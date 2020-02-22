@@ -9,7 +9,10 @@
         <v-btn text @click="$router.push('/sign')">로그인</v-btn>
         <v-btn text @click="$router.push('/register')">회원가입</v-btn>
       </template>
-      <v-btn text v-else @click="signOut">로그아웃</v-btn>
+      <template v-else>
+        <v-btn text @click="$router.push('/revise')">사용자 정보</v-btn>
+        <v-btn text @click="signOut">로그아웃</v-btn>
+      </template>
     </v-toolbar-items>
   </v-app-bar>
 </template>

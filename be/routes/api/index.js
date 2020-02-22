@@ -68,6 +68,7 @@ router.use('/manage', require('./manage'))
 router.use('/test', require('./test'))
 router.use('/user', require('./user'))
 router.use('/article', require('./article'))
+router.use('/revise', require('./revise'))
 
 router.all('*', function(req, res, next) {
   next(createError(404, '그런 api 없어요.'));
