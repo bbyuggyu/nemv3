@@ -64,13 +64,15 @@
       <v-icon>+</v-icon>
     </v-btn>
 
-   <v-dialog v-model="dialog" persistent max-width="500px" :fullscreen="$vuetify.breakpoint.xs">
+   <v-dialog v-model="dialog" max-width="500px" :fullscreen="$vuetify.breakpoint.xs">
       <v-card v-if="!dlMode">
         <v-card-title>
-          <span class="headline">{{selArticle.title}}</span>
+          <span class="headline">제목 : {{selArticle.title}}</span>
         </v-card-title>
         <v-card-text>
-          {{selArticle.content}}
+          <p>내용</p>
+          <!-- {{selArticle.content}} -->
+          <viewer :value="selArticle.content" />
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -78,6 +80,7 @@
           <v-btn color="error darken-1" text @click.native="ca=true">삭제</v-btn>
           <v-btn color="secondary darken-1" text @click.native="dialog = false">닫기</v-btn>
         </v-card-actions>
+
         <v-card-text>
           <v-card-text v-if="ca">
             <v-alert v-model="ca" type="warning">
@@ -87,6 +90,49 @@
             </v-alert>
           </v-card-text>
         </v-card-text>
+
+        <v-divider></v-divider>
+        <v-list two-line v-for="comment in selArticle._comments" :key="comment._id">
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>{{comment.content}}</v-list-item-title>
+              <v-list-item-subtitle>{{comment._user ? comment._user.id : '손님'}}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-btn
+                  icon
+                  ripple
+                  @click="commentDialogOpen(comment)"
+              >
+                <v-icon color="warning lighten-1">
+                  mdi-pencil
+                </v-icon>
+              </v-btn>
+            </v-list-item-action>
+            <v-list-item-action>
+              <v-btn
+                  icon
+                  ripple
+                  @click="delComment(comment)"
+              >
+                <v-icon color="error">
+                  mdi-close
+                </v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+          <v-divider></v-divider>
+        </v-list>
+
+        <v-text-field
+              label="댓글 작성"
+              v-model="formComment.content"
+              append-icon="mdi-message"
+              @keyup.enter="checkRobot"
+              @click:append="checkRobot"
+          >
+          </v-text-field>
+
       </v-card>
       <v-card v-else>
         <v-card-title>
@@ -104,12 +150,13 @@
                 ></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-textarea
+                <!-- <v-textarea
                   label="내용"
                   persistent-hint
                   required
                   v-model="form.content"
-                ></v-textarea>
+                ></v-textarea> -->
+                <editor v-model="form.content"/>
               </v-flex>
             </v-layout>
           </v-container>
@@ -121,6 +168,36 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog width="400" v-model="commentDialog">
+      <v-card>
+        <v-card-text>
+          <v-text-field
+              label="댓글 수정"
+              v-model="selComment.content"
+              @keyup.enter="modComment()"
+              flat
+              height="100"
+          >
+          </v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="warning" @click="modComment()">
+            수정
+          </v-btn>
+          <v-btn color="secondary" @click="commentDialog = false">닫기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <vue-recaptcha
+        ref="recaptcha"
+        :sitekey="$cfg.recaptchaSiteKey"
+        size="invisible"
+        @verify="onVerify"
+        @expired="onExpired"
+    >
+    </vue-recaptcha>
 
   </v-container>
 </template>
@@ -146,14 +223,26 @@ export default {
       pageCount: 0,
       loading: false,
       dialog: false,
+      commentDialog: false,
       dlMode: 0, // 0: read, 1: write, 2: modify
-      selArticle: {},
+      selArticle: {
+        _comments: []
+      },
+      selComment: {
+        content: ''
+      },
+      formComment: {
+        content: '',
+        response: ''
+      },
       ca: false,
       lvs: [0, 1, 2, 3],
       form: {
         title: '',
-        content: ''
+        content: '',
+        response: ''
       },
+      response: '',
       dlRead: false,
       rd: {
         title: '',
@@ -171,6 +260,27 @@ export default {
     this.getBoard()
   },
   methods: {
+    commentDialogOpen (c) {
+      this.commentDialog = true
+      this.selComment = c
+    },
+    onVerify (r) {
+      this.response = r
+      this.$refs.recaptcha.reset()
+      if (this.dlMode === 0) this.addComment()
+      else if (this.dlMode === 1) this.add()
+      else if (this.dlMode === 2) this.mod()
+    },
+    onExpired () {
+      this.form.response = ''
+      this.$refs.recaptcha.reset()
+    },
+    checkRobot () {
+      if (!this.response.length) return this.$refs.recaptcha.execute()
+      if (this.dlMode === 0) this.addComment()
+      else if (this.dlMode === 1) this.add()
+      else if (this.dlMode === 2) this.mod()
+    },
     addDialog () {
       this.dialog = true
       this.dlMode = 1
@@ -200,6 +310,7 @@ export default {
     add () {
       if (!this.form.title) return this.$store.commit('pop', { msg: '제목을 작성해주세요', color: 'warning' })
       if (!this.form.content) return this.$store.commit('pop', { msg: '내용을 작성해주세요', color: 'warning' })
+      this.form.response = this.response
       this.$axios.post(`article/${this.board._id}`, this.form)
         .then((r) => {
           this.dialog = false
@@ -232,6 +343,7 @@ export default {
           this.dialog = true
           this.selArticle.content = data.d.content
           this.selArticle.cnt.view = data.d.cnt.view
+          this.selArticle._comments = data.d._comments
           this.loading = false
         })
         .catch((e) => {
@@ -261,6 +373,41 @@ export default {
           this.dialog = false
           if (!data.success) throw new Error(data.msg)
           this.list()
+        })
+        .catch((e) => {
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
+        })
+    },
+    addComment () {
+      this.formComment.response = this.response
+      this.$axios.post(`comment/${this.selArticle._id}`, this.formComment)
+        .then(({ data }) => {
+          if (!data.success) throw new Error(data.msg)
+          this.formComment.content = ''
+          this.read(this.selArticle)
+          // this.list()
+        })
+        .catch((e) => {
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
+        })
+    },
+    delComment (cmt) {
+      this.$axios.delete(`comment/${cmt._id}`)
+        .then(({ data }) => {
+          if (!data.success) throw new Error(data.msg)
+          this.read(this.selArticle)
+        })
+        .catch((e) => {
+          if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
+        })
+    },
+    modComment () {
+      if (!this.selComment.content) return this.$store.commit('pop', { msg: '내용을 작성해주세요', color: 'warning' })
+      this.commentDialog = false
+      this.$axios.put(`comment/${this.selComment._id}`, { content: this.selComment.content })
+        .then(({ data }) => {
+          if (!data.success) throw new Error(data.msg)
+          this.read(this.selArticle)
         })
         .catch((e) => {
           if (!e.response) this.$store.commit('pop', { msg: e.message, color: 'warning' })
