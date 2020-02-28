@@ -2,10 +2,10 @@
 <v-navigation-drawer v-model='drawer' :mini-variant.sync='mini' permanent app>
   <v-list-item>
     <v-list-item-avatar>
-      <v-img src='https://randomuser.me/api/portraits/men/85.jpg'></v-img>
+      <v-img :src="$store.state.user.img" @click="$router.push('/revise')"></v-img>
     </v-list-item-avatar>
 
-    <v-list-item-title>John Leider</v-list-item-title>
+    <v-list-item-title>{{$store.state.user.name}}</v-list-item-title>
 
     <v-btn icon @click.stop='mini = !mini'>
       <v-icon>mdi-chevron-left</v-icon>

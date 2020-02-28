@@ -10,15 +10,27 @@ export default new Vuex.Store({
       act: false,
       msg: '',
       color: 'error'
+    },
+    user: {
+      name: '일반사용자',
+      id: '없음',
+      img: 'http://medfordgospelmission.org/wp-content/uploads/2018/06/default-user-image-female.png'
     }
   },
   mutations: {
-    getToken (state) {
+    getToken (state, user) {
       state.token = localStorage.getItem('token')
+      state.user = user
+      console.log(24, user)
     },
     delToken (state) {
       localStorage.removeItem('token')
       state.token = null
+      state.user = {
+        name: '일반사용자',
+        id: '없음',
+        img: 'http://medfordgospelmission.org/wp-content/uploads/2018/06/default-user-image-female.png'
+      }
     },
     pop (state, d) {
       state.sb.msg = d.msg

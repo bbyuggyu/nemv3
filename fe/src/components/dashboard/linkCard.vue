@@ -1,6 +1,6 @@
 <template>
   <v-card height="100%">
-    <v-toolbar dark tabs>
+    <v-toolbar color="cyan" dark>
       <v-toolbar-title>{{board.name}}</v-toolbar-title>
       <v-tabs
         slot="extension"

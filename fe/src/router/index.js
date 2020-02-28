@@ -145,8 +145,7 @@ const routes = [
   {
     path: '/revise',
     name: 'revise',
-    component: () => import('../views/revise'),
-    beforeEnter: pageCheck
+    component: () => import('../views/revise')
   },
   {
     path: '*',
