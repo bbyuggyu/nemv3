@@ -8,7 +8,7 @@
 export default {
   data () {
     return {
-      siteCopyright: '미정'
+      siteCopyright: '미정222'
     }
   },
   mounted () {
